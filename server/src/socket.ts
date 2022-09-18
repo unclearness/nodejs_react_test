@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
 const exec = require("child_process").exec;
-import { socketid2filepath, UPLOAD_DIR } from "./app";
+import { UPLOAD_DIR } from "./app";
 //const uuid = require('uuid');
 //const path = require('path');
 const spawn = require("child_process").spawn;
@@ -16,10 +16,10 @@ function socket({ io }: { io: Server }) {
 
     socket.on("preprocess", (data: any) => {
       //const tmp_path = suuid_create() + path.extname(filename);
-      socketid2filepath[socket.id] =
-        __dirname + "/../" + UPLOAD_DIR + data["data"];
+      //socketid2filepath[socket.id] =
+      //  __dirname + "/../" + UPLOAD_DIR + data["data"];
       console.log("preprocess");
-      console.log(socketid2filepath);
+      //console.log(socketid2filepath);
       socket.emit("preprocessFinished", {});
     });
 
@@ -27,7 +27,7 @@ function socket({ io }: { io: Server }) {
       console.log("startProcess");
       const python_exe = "python";
       const python_src_path = __dirname + "/../script/test.py";
-      const filepath = socketid2filepath[socket.id];
+      const filepath = __dirname + "/../" + UPLOAD_DIR + socket.id + ".txt";
       const outfilepath = filepath + ".tmp";
       const command = `${python_exe} ${python_src_path} ${filepath} ${outfilepath}`;
 

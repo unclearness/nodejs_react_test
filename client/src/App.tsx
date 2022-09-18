@@ -84,21 +84,30 @@ function App() {
   const onClickSubmit = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
 
+    if (!file1 || file1.name === "") {
+      alert("Please attach file");
+      return;
+    }
+
+    if (
+      file1.name.split(".").length < 2 ||
+      file1.name.split(".").pop() != "txt"
+    ) {
+      alert("Please attach .txt");
+      return;
+    }
+
     if (submitted) {
       alert("Already submitted. Reload to process other files");
       return;
     }
     setSubmitted(true);
 
-    if (!file1 || file1.name === "") {
-      alert("Please attach file");
-      return;
-    }
-
     console.log("POST");
     // POST
 
     const formFileData = new FormData();
+    formFileData.append("socket_id", socket.id);
     formFileData.append("file1", file1);
     console.log("formFileData", formFileData);
     axios

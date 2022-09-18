@@ -7,13 +7,13 @@ import socket from "./socket";
 const port = config.get<number>("port");
 const host = config.get<string>("host");
 const corsOrigin = config.get<string>("corsOrigin");
-
+const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
 const UPLOAD_DIR = "./public/uploads/";
-let socketid2filepath: { [id: string]: string } = {};
+//let socketid2filepath: { [id: string]: string } = {};
 //const { exec } = require("child_process");
 const uuid = require("uuid");
 
@@ -78,17 +78,16 @@ const startServer = () => {
   app.get("/api/*", (req: any, res: any) => {
     //return res.send(`Server is up`);
 
-    if (req.url.length > 8) {
-      const socket_id = req.url.substring(5, req.url.length - 4);
+    if (req.url.length > 5) {
+      const socket_id = req.url.substring(5);
       console.log(socket_id);
-      if (socket_id in socketid2filepath) {
-        const out_path = socketid2filepath[socket_id] + ".tmp";
+      const out_path = __dirname + "/../" + UPLOAD_DIR + socket_id + ".tmp";
+      if (fs.existsSync(out_path)) {
         const out_name = socket_id + ".txt"; //path.basename(out_path, ".tmp");
         return res.download(out_path, out_name);
       }
     }
     res.status(500);
-    console.log(socketid2filepath);
     return res.send("No processed file");
   });
 
@@ -118,8 +117,13 @@ const startServer = () => {
     "/api/upload_file",
     upload.single("file1"),
     function (req: any, res: any, next: any) {
+      const socket_id = req.body["socket_id"];
+      const newPath =
+        UPLOAD_DIR + socket_id + path.extname(req.file.originalname);
+      fs.rename(UPLOAD_DIR + req.file.filename, newPath, () => {});
+      console.log("rename", req.file.filename, newPath);
       const response = JSON.stringify({
-        filename: req.file.filename,
+        filename: socket_id + path.extname(req.file.originalname),
         originalname: req.file.originalname,
       });
       console.log(response);
@@ -130,4 +134,4 @@ const startServer = () => {
 
 startServer();
 
-export { socketid2filepath, UPLOAD_DIR };
+export { UPLOAD_DIR };
