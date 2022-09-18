@@ -32,7 +32,23 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+
+#terminal {
+  font-family: 'courier new', Futura, Helvetica, '游ゴシック', 'メイリオ', Osaka;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: block;
+  border: none;
+  resize: none;
+  background-color: black;
+  color: white;
+  font-size: 12pt;
+  line-height: 1.4em;
 }

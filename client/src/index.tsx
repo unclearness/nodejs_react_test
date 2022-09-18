@@ -1,19 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import SocketsProvider from './context/socket.context'
+import React from "react";
+//import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import SocketsProvider from "./context/socket.context";
 
 // After
-import { createRoot } from 'react-dom/client';
-const container = document.getElementById('root');
+import { createRoot } from "react-dom/client";
+const container = document.getElementById("root");
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
-root.render(  <SocketsProvider>
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-</SocketsProvider>);
+root.render(
+  <SocketsProvider>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </SocketsProvider>
+);
 
 // ReactDOM.render(
 //   <SocketsProvider>
