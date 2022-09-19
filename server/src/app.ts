@@ -1,4 +1,3 @@
-//import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import config from "config";
@@ -13,8 +12,6 @@ const bodyParser = require("body-parser");
 const multer = require("multer");
 const path = require("path");
 const UPLOAD_DIR = "./public/uploads/";
-//let socketid2filepath: { [id: string]: string } = {};
-//const { exec } = require("child_process");
 const uuid = require("uuid");
 
 // https://github.com/herbrandson/short-uuid/blob/master/index.js
@@ -38,35 +35,15 @@ const storage = multer.diskStorage({
   filename: function (req: any, file: any, cb: Function) {
     //console.log('filename');
     cb(null, suuid_create() + path.extname(file.originalname));
-    //cb(null, socketid2filepath[req.]);
   },
 });
 
 const upload = multer({ storage: storage });
 
-// const serverProcess = (text1, text2, suc_cb, fail_cb) => {
-//     let python_exe = 'python';
-//     const python_src_path = './src/server/script/test.py';
-//     exec(`${python_exe} ${python_src_path} ./public/uploads/${text1} ${text2}`, (error, stdout, stderr) => {
-//         console.error(`exec error: ${error}`);
-//         console.log(`stdout: ${stdout}`);
-//         console.error(`stderr: ${stderr}`);
-//         if (error) {
-//             fail_cb();
-//             return;
-//         }
-//         suc_cb();
-//     });
-// };
-
 const startServer = () => {
-  const PORT = 4000; //process.env.PORT || 3001;
   const app = express();
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
-  //app.listen(PORT, () => {
-  //    console.log(`Server listening on ${PORT}`);
-  //});
   const httpServer = createServer(app);
   const io = new Server(httpServer, {
     cors: {
@@ -76,8 +53,6 @@ const startServer = () => {
   });
   app.get("/", (_: any, res: any) => res.send(`Server is up`));
   app.get("/api/*", (req: any, res: any) => {
-    //return res.send(`Server is up`);
-
     if (req.url.length > 5) {
       const socket_id = req.url.substring(5);
       console.log(socket_id);
@@ -96,22 +71,6 @@ const startServer = () => {
 
     socket({ io });
   });
-
-  // app.post('/upload_text', (req, res) => {
-  //     const response = JSON.stringify(req.body);
-  //     console.log(response);
-  //     const suc_cb = () => {
-  //         console.log('end heavy process');
-  //         res.send(response);
-  //     }
-  //     const fail_cb = () => {
-  //         console.log('failed');
-  //         res.status(500).send({
-  //             message: 'Internal error!'
-  //         });
-  //     }
-  //     serverProcess(req.body.text1, req.body.text2, suc_cb, fail_cb);
-  // });
 
   app.post(
     "/api/upload_file",

@@ -13,12 +13,10 @@ const rows = 25;
 function App() {
   const { socket, messages, setMessages, logData, setLogData } = useSockets();
   const messageRef = useRef(null);
-  //const submitted = false;
   const [submitted, setSubmitted] = useState(false);
   //const [text1, setText1] = useState("");
   //const [text2, setText2] = useState("");
   const [file1, setFile1] = useState(new File([], ""));
-  //const [displayLogs, setDisplayLogs] = useState("server logs");
 
   useEffect(() => {
     return () => {
@@ -36,16 +34,10 @@ function App() {
         console.log("response");
         console.log("logData", logData);
         console.log("msg", msg);
-        //let updated = msg;
-        //if (logData) {
-        //const updated = logData.concat(msg);
-        //}
-        //setLogData(updated);
         setLogData((prevLogData: any) => {
           const cat = prevLogData.concat(msg);
           return cat;
         });
-        //setDisplayLogs(logData.join("\n"));
       });
 
       socket.on("exit", function (msg) {
@@ -123,18 +115,9 @@ function App() {
   };
 
   let contactForm = null;
-  //if (submitted) {
-  //  contactForm = (
-  //     <div className="contact-submit-message">Send data to server...</div>
-  //   );
-  // } else {
+
   contactForm = (
-    <form
-      id="upload_form"
-      onSubmit={() => {
-        //setSubmitted(true);
-      }}
-    >
+    <form id="upload_form" onSubmit={() => {}}>
       <p> Please upload .txt </p>
       <input
         type="file"
@@ -145,43 +128,6 @@ function App() {
       <input type="submit" onClick={onClickSubmit} disabled={submitted} />
     </form>
   );
-  // }
-
-  // function handleClick() {
-  //   const current: any = messageRef ? messageRef.current : null;
-  //   let val = current ? current.value : null;
-  //   if (!String(val).trim()) return;
-  //   console.log(messageRef, current, String(val).trim());
-  //   const date1 = new Date();
-  //   //console.log(date1); // Sat Feb 01 2020 20:49:28 GMT+0900 (日本標準時)
-  //   //console.log(date1.toLocaleString()); // 2020/2/1 20:49:28
-  //   const to_send = {
-  //     message: String(val).trim(),
-  //     username: socket.id,
-  //     time: date1.toLocaleString(),
-  //   };
-
-  //   socket.emit("sendMessage", to_send);
-
-  //   if (val) {
-  //     val = "";
-  //   }
-  //   console.log("handleClick");
-  // }
-
-  // socket.on("responseMessage", (message) => {
-  //   console.log(message);
-  //   setMessages([...messages!, message]);
-  //   //console.log(messages);
-  // });
-
-  // return (
-  //   <>
-  //     <input type="text" ref={messageRef} placeholder="write message" />
-  //     <button onClick={onClickSubmit}>Send</button>
-  //     <Messages />
-  //   </>
-  // );
 
   return (
     <div className="contact-form">
@@ -197,13 +143,10 @@ function App() {
 }
 
 function Logs(props: any) {
-  //const { socket, messages, setMessages, logData, setLogData } = useSockets();
   const [displayLogs, setDisplayLogs] = useState("server logs");
   const logData = props.logData;
-  //let displayLogs = "server logs";
   useEffect(() => {
     if (logData) {
-      //displayLogs = logData.join("\n");
       setDisplayLogs(logData.join("\n"));
     }
   }, [logData]);
@@ -236,25 +179,6 @@ function Logs(props: any) {
         readOnly={true}
       ></textarea>
     </div>
-  );
-}
-
-function Messages() {
-  const { socket, messages, setMessages } = useSockets();
-  return (
-    <>
-      {messages && (
-        <div>
-          {messages.map((message, index) => {
-            return (
-              <li key={index}>
-                {message.message} {message.username} {message.time}
-              </li>
-            );
-          })}
-        </div>
-      )}
-    </>
   );
 }
 

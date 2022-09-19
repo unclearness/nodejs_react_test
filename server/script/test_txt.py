@@ -33,7 +33,6 @@ def tmp(input_txt_path, output_txt_path):
     if len(lines) < 1:
         print('failed to load file!', flush=True, end='')
         sys.exit(1)
-    #tmp_file_path = os.path.join(abs_dir, base_name + ".tmp")
     with open(output_txt_path, 'w') as fp:
         for line in lines:
             fp.write(line)

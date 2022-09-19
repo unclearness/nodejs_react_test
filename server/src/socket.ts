@@ -1,8 +1,6 @@
 import { Server, Socket } from "socket.io";
 const exec = require("child_process").exec;
 import { UPLOAD_DIR } from "./app";
-//const uuid = require('uuid');
-//const path = require('path');
 const spawn = require("child_process").spawn;
 
 function socket({ io }: { io: Server }) {
@@ -15,28 +13,22 @@ function socket({ io }: { io: Server }) {
     });
 
     socket.on("preprocess", (data: any) => {
-      //const tmp_path = suuid_create() + path.extname(filename);
-      //socketid2filepath[socket.id] =
-      //  __dirname + "/../" + UPLOAD_DIR + data["data"];
       console.log("preprocess");
-      //console.log(socketid2filepath);
       socket.emit("preprocessFinished", {});
     });
 
     socket.on("startProcess", () => {
       console.log("startProcess");
       const python_exe = "python";
-      const python_src_path = __dirname + "/../script/test.py";
+      const python_src_path = __dirname + "/../script/test_txt.py";
       const filepath = __dirname + "/../" + UPLOAD_DIR + socket.id + ".txt";
       const outfilepath = filepath + ".tmp";
-      const command = `${python_exe} ${python_src_path} ${filepath} ${outfilepath}`;
-
       const execCmd = spawn(python_exe, [
         python_src_path,
         filepath,
         outfilepath,
-      ]); //exec(command);
-      console.log(execCmd.pid);
+      ]);
+      console.log(execCmd, execCmd.pid);
 
       execCmd.stdout.on("data", function (buf: Buffer) {
         const data = buf.toString();
@@ -53,7 +45,6 @@ function socket({ io }: { io: Server }) {
       });
 
       execCmd.on("exit", function (code: Buffer) {
-        // 処理が終了したことをクライアントに送信
         socket.emit("exit", { data: code.toString() });
       });
     });

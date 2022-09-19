@@ -1,7 +1,6 @@
-import { useContext, createContext, useState, useEffect } from "react";
+import { useContext, createContext, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import { SOCKET_URL } from "./config/default";
-//import EVENTS from "./config/events";
 
 interface Context {
   socket: Socket;
@@ -12,7 +11,6 @@ interface Context {
   setLogData: Function;
 }
 
-//SOCKET_URLの中身のところに接続を要求
 const socket = io(SOCKET_URL);
 
 const SocketContext = createContext<Context>({
