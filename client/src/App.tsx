@@ -17,6 +17,10 @@ function App() {
   //const [text1, setText1] = useState("");
   //const [text2, setText2] = useState("");
   const [file1, setFile1] = useState(new File([], ""));
+  //let ext = "";
+  const [ext, setExt] = useState("");
+  const file1Ref = useRef(file1);
+  const extRef = useRef(ext);
 
   useEffect(() => {
     return () => {
@@ -24,9 +28,9 @@ function App() {
 
       socket.on("preprocessFinished", () => {
         // Execute server program
-        console.log("got preprocessFinished");
+        console.log("got preprocessFinished", file1Ref.current.name);
         setLogData(() => []);
-        socket.emit("startProcess");
+        socket.emit("startProcess", { data: file1Ref.current.name });
       });
 
       socket.on("response", function (msg) {
@@ -42,17 +46,45 @@ function App() {
 
       socket.on("exit", function (msg) {
         console.log(msg);
-        const download_name = `${socket.id}.txt`;
+        const download_name = `${socket.id}.${extRef.current}`;
         const download_msg = `processed file is avairable at /api/${download_name}`;
         setLogData((prevLogData: any) => {
           const cat = prevLogData.concat(download_msg);
           return cat;
         });
         axios
-          .get(`/api/${socket.id}.txt`)
-          .then((res) => {
-            console.log("succeeded to get result", res);
-            fileDownload(res.data, download_name);
+          .get(`/api/${download_name}`, {
+            responseType: "blob",
+          })
+          .then(({ headers, data }) => {
+            console.log("succeeded to get result", headers);
+            //fileDownload(res.data, download_name);
+
+            const getFileNameFromHeader = (
+              content: any,
+              defaultName = "download.csv"
+            ) => {
+              const regex = content.match(
+                /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+              );
+              if (regex === null) return defaultName;
+              return decodeURI(regex[1]) || defaultName;
+            };
+
+            const contentDisposition = headers["content-disposition"];
+            const fileName = download_name; //getFileNameFromHeader(
+            //contentDisposition,
+            // download_name
+            //);
+
+            const downloadUrl = window.URL.createObjectURL(new Blob([data]));
+            const link = document.createElement("a");
+            link.href = downloadUrl;
+            link.setAttribute("download", fileName); //any other extension
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
             socket.disconnect();
           })
           .catch(() => {
@@ -83,11 +115,16 @@ function App() {
 
     if (
       file1.name.split(".").length < 2 ||
-      file1.name.split(".").pop() != "txt"
+      (file1.name.split(".").pop() != "txt" &&
+        file1.name.split(".").pop() != "zip")
     ) {
-      alert("Please attach .txt");
+      alert("Please attach .txt or .zip");
       return;
     }
+
+    file1Ref.current = file1;
+    setExt(file1.name.split(".").pop()!);
+    extRef.current = file1.name.split(".").pop()!;
 
     if (submitted) {
       alert("Already submitted. Reload to process other files");
@@ -118,7 +155,7 @@ function App() {
 
   contactForm = (
     <form id="upload_form" onSubmit={() => {}}>
-      <p> Please upload .txt </p>
+      <p> Please upload .txt or .zip </p>
       <input
         type="file"
         id="file1"
@@ -150,9 +187,6 @@ function Logs(props: any) {
       setDisplayLogs(logData.join("\n"));
     }
   }, [logData]);
-  function onChange(e: any) {
-    e.scrollTop = e.scrollHeight;
-  }
 
   const textArea: any = useRef(null);
 

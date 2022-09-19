@@ -53,15 +53,18 @@ const startServer = () => {
   });
   app.get("/", (_: any, res: any) => res.send(`Server is up`));
   app.get("/api/*", (req: any, res: any) => {
-    if (req.url.length > 5) {
-      const socket_id = req.url.substring(5);
-      console.log(socket_id);
-      const out_path = __dirname + "/../" + UPLOAD_DIR + socket_id + ".tmp";
-      if (fs.existsSync(out_path)) {
-        const out_name = socket_id + ".txt"; //path.basename(out_path, ".tmp");
-        return res.download(out_path, out_name);
-      }
+    //if (req.url.length > 5) {
+    //const socket_id = req.url.substring(5);
+    //console.log(socket_id);
+    const out_path = path.normalize(
+      __dirname + "/../" + UPLOAD_DIR + req.url.substring(5)
+    ); //socket_id + ".tmp";
+    console.log(out_path, req.url);
+    if (fs.existsSync(out_path)) {
+      //const out_name = socket_id + ".txt"; //path.basename(out_path, ".tmp");
+      return res.download(out_path, req.url);
     }
+    //}
     res.status(500);
     return res.send("No processed file");
   });
@@ -78,14 +81,14 @@ const startServer = () => {
     function (req: any, res: any, next: any) {
       const socket_id = req.body["socket_id"];
       const newPath =
-        UPLOAD_DIR + socket_id + path.extname(req.file.originalname);
+        UPLOAD_DIR + socket_id + "_tmp" + path.extname(req.file.originalname);
       fs.rename(UPLOAD_DIR + req.file.filename, newPath, () => {});
       console.log("rename", req.file.filename, newPath);
       const response = JSON.stringify({
         filename: socket_id + path.extname(req.file.originalname),
         originalname: req.file.originalname,
       });
-      console.log(response);
+      //console.log(response);
       res.send(response);
     }
   );

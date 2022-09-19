@@ -17,7 +17,7 @@ def tmp(input_txt_path, output_txt_path):
     if ext != ".txt":
         print(f'extensiton {ext} is not .txt!')
         sys.exit(1)
-    print('start server program...')
+    print('Start txt server program...')
     if random.random() < 0.1:
         print('failed!', flush=True, end='')
         sys.exit(1)
@@ -28,15 +28,15 @@ def tmp(input_txt_path, output_txt_path):
             lines.append(line)
         for i in range(0, num):
             time.sleep(0.02)
-            print(f'progress: {i} / {num}', flush=True, end='')
+            print(f'Progress: {i} / {num}', flush=True, end='')
             lines.append(str(i) + '\n')
     if len(lines) < 1:
-        print('failed to load file!', flush=True, end='')
+        print('Failed to load file!', flush=True, end='')
         sys.exit(1)
     with open(output_txt_path, 'w') as fp:
         for line in lines:
             fp.write(line)
-    print('finish server program!')
+    print('Finish txt server program!')
 
 
 if __name__ == '__main__':
