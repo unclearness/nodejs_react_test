@@ -6,7 +6,7 @@ import sys
 import shutil
 
 
-def tmp(input_zip_path, output_zip_path):
+def tmp(input_zip_path, output_zip_path, option):
     input_zip_path = os.path.normpath(input_zip_path)
     output_zip_path = os.path.normpath(output_zip_path)
     if not os.path.exists(input_zip_path):
@@ -18,6 +18,7 @@ def tmp(input_zip_path, output_zip_path):
     if ext != ".zip":
         print(f'extensiton {ext} is not .zip!')
         sys.exit(1)
+    print("Options", option)
     print('Start zip server program...')
     # if random.random() < 0.1:
     #    print('failed!', flush=True, end='')
@@ -57,5 +58,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('input_zip_path')
     parser.add_argument('output_zip_path')
+    parser.add_argument('--op1')
     args = parser.parse_args()
-    tmp(args.input_zip_path, args.output_zip_path)
+    tmp(args.input_zip_path, args.output_zip_path, args.op1)

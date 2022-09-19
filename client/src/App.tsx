@@ -4,7 +4,6 @@ import { useSockets } from "./context/socket.context";
 import axios from "axios";
 import { AxiosResponse } from "axios";
 import "./App.css";
-import fileDownload from "js-file-download";
 const baseUrl = "";
 const fileApiUrl = baseUrl + "/api/upload_file";
 
@@ -14,13 +13,14 @@ function App() {
   const { socket, messages, setMessages, logData, setLogData } = useSockets();
   const messageRef = useRef(null);
   const [submitted, setSubmitted] = useState(false);
-  //const [text1, setText1] = useState("");
+  const [text1, setText1] = useState("");
   //const [text2, setText2] = useState("");
   const [file1, setFile1] = useState(new File([], ""));
   //let ext = "";
   const [ext, setExt] = useState("");
   const file1Ref = useRef(file1);
   const extRef = useRef(ext);
+  const text1Ref = useRef(text1);
 
   useEffect(() => {
     return () => {
@@ -30,7 +30,11 @@ function App() {
         // Execute server program
         console.log("got preprocessFinished", file1Ref.current.name);
         setLogData(() => []);
-        socket.emit("startProcess", { data: file1Ref.current.name });
+
+        socket.emit("startProcess", {
+          filename: file1Ref.current.name,
+          options: text1Ref.current,
+        });
       });
 
       socket.on("response", function (msg) {
@@ -105,6 +109,11 @@ function App() {
     setFile1(f1);
   };
 
+  const onText1InputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText1(e.target.value);
+    text1Ref.current = e.target.value;
+  };
+
   const onClickSubmit = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
 
@@ -156,13 +165,26 @@ function App() {
   contactForm = (
     <form id="upload_form" onSubmit={() => {}}>
       <p> Please upload .txt or .zip </p>
-      <input
-        type="file"
-        id="file1"
-        onChange={onFileInputChange}
-        disabled={submitted}
-      />
-      <input type="submit" onClick={onClickSubmit} disabled={submitted} />
+      <p>
+        <input
+          type="file"
+          id="file1"
+          onChange={onFileInputChange}
+          disabled={submitted}
+        />
+      </p>
+      <p>
+        <input
+          type="text"
+          id="text1"
+          onChange={onText1InputChange}
+          disabled={submitted}
+          placeholder="Options"
+        ></input>
+      </p>
+      <p>
+        <input type="submit" onClick={onClickSubmit} disabled={submitted} />
+      </p>
     </form>
   );
 

@@ -5,7 +5,7 @@ import random
 import sys
 
 
-def tmp(input_txt_path, output_txt_path):
+def tmp(input_txt_path, output_txt_path, option):
     input_txt_path = os.path.normpath(input_txt_path)
     output_txt_path = os.path.normpath(output_txt_path)
     if not os.path.exists(input_txt_path):
@@ -17,6 +17,7 @@ def tmp(input_txt_path, output_txt_path):
     if ext != ".txt":
         print(f'extensiton {ext} is not .txt!')
         sys.exit(1)
+    print("Options", option)
     print('Start txt server program...')
     if random.random() < 0.1:
         print('failed!', flush=True, end='')
@@ -43,5 +44,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('input_txt_path')
     parser.add_argument('output_txt_path')
+    parser.add_argument('--op1')
     args = parser.parse_args()
-    tmp(args.input_txt_path, args.output_txt_path)
+    tmp(args.input_txt_path, args.output_txt_path, args.op1)

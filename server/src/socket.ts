@@ -22,7 +22,8 @@ function socket({ io }: { io: Server }) {
 
     socket.on("startProcess", (msg) => {
       console.log("startProcess", msg);
-      const ext = path.extname(msg["data"]);
+      const ext = path.extname(msg["filename"]);
+      const options = msg["options"];
       const python_exe = "python";
       const python_txt_src_path = __dirname + "/../script/test_txt.py";
       const python_zip_src_path = __dirname + "/../script/test_zip.py";
@@ -40,11 +41,11 @@ function socket({ io }: { io: Server }) {
         socket.emit("exit", { data: message });
         return;
       }
-      const execCmd = spawn(python_exe, [
-        python_src_path,
-        intpufilepath,
-        outfilepath,
-      ]);
+      let args = [python_src_path, intpufilepath, outfilepath];
+      if (options != "") {
+        args = args.concat(["--op1", options]);
+      }
+      const execCmd = spawn(python_exe, args);
       console.log(execCmd.pid);
 
       execCmd.stdout.on("data", function (buf: Buffer) {
